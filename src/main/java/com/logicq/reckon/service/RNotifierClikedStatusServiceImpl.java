@@ -57,8 +57,8 @@ public class RNotifierClikedStatusServiceImpl implements RNotifierClikedStatusSe
 							.filter(thr -> ((thr.getInterval() * 1000) <= duration)).findFirst();
 					if (thrOption.isPresent()) {
 						noti.setClickStatus(thrOption.get().getName());
-						String fetchedColorCode = thrOption.get().getColorCode().replaceFirst("#", "");
-						String colorCode = env.getProperty(fetchedColorCode);
+						//String fetchedColorCode = thrOption.get().getColorCode().replaceFirst("#", "");
+						String colorCode = env.getProperty(thrOption.get().getName());
 						noti.setColorCode(colorCode);
 						String iconURL = "assets/img/hotel/" + noti.getServiceName().toLowerCase() + "/"
 								+ thrOption.get().getName().toLowerCase() + ".png";

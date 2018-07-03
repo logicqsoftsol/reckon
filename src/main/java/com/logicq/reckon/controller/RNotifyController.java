@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -97,25 +98,61 @@ public class RNotifyController {
 		return new ResponseEntity<List<LinkedRNotifyDetails>>(linkedRnotifyDetailsRepository.findAll(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/click", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<RNotifierClikedStatus> clickRNotify(@RequestBody RNotifierCliked rNotifierCliked) {
-		List<RNotifierClikedStatus> rnotifyList = clickedRnotifyDetailsRepository
-				.findByNotifiers(rNotifierCliked.getReckonId());
-		RNotifierClikedStatus rnotifysttatus = null;
-		if (null == rnotifysttatus || rnotifyList.isEmpty()) {
-			rnotifysttatus = new RNotifierClikedStatus();
-			List<LinkedRNotifyDetails> linkedRnotifyDetailsDetails = linkedRnotifyDetailsRepository
-					.findByNotifiers(rNotifierCliked.getReckonId());
+	/*
+	 * @RequestMapping(value = "/click", method = RequestMethod.POST, produces =
+	 * MediaType.APPLICATION_JSON_VALUE, consumes =
+	 * MediaType.APPLICATION_JSON_VALUE) public
+	 * ResponseEntity<RNotifierClikedStatus> clickRNotify(@RequestBody
+	 * RNotifierCliked rNotifierCliked) { List<RNotifierClikedStatus>
+	 * rnotifyList = clickedRnotifyDetailsRepository
+	 * .findByNotifiers(rNotifierCliked.getReckonId()); RNotifierClikedStatus
+	 * rnotifysttatus = null; if (null == rnotifysttatus ||
+	 * rnotifyList.isEmpty()) { rnotifysttatus = new RNotifierClikedStatus();
+	 * List<LinkedRNotifyDetails> linkedRnotifyDetailsDetails =
+	 * linkedRnotifyDetailsRepository
+	 * .findByNotifiers(rNotifierCliked.getReckonId());
+	 * 
+	 * LinkedService linkedService =
+	 * linkedServiceRepository.findOne(rNotifierCliked.getRnotifyCode());
+	 * Threshold thresold =
+	 * thresholdRepository.findByName(EventIdentifier.DEFAULT.getvalue());
+	 * ServiceConfig serviceConfig =
+	 * serviceConfigRepository.findOne(linkedService.getServiceName());
+	 * 
+	 * // Set Notify Details if (!linkedRnotifyDetailsDetails.isEmpty()) {
+	 * rnotifysttatus.setLinkedId(linkedRnotifyDetailsDetails.get(0).getLinkedId
+	 * ()); rnotifysttatus.setLinkedType(linkedRnotifyDetailsDetails.get(0).
+	 * getLinkedType());
+	 * rnotifysttatus.setNotifiers(linkedRnotifyDetailsDetails.get(0).
+	 * getNotifiers()); }
+	 * rnotifysttatus.setRnotifyCode(linkedService.getServiceCode());
+	 * rnotifysttatus.setServiceName(linkedService.getServiceName());
+	 * rnotifysttatus.setClickStatusIcon(thresold.getName());
+	 * rnotifysttatus.setClickStatusIcon(serviceConfig.getIconURL());
+	 * rnotifysttatus.setClickTime(new Date());
+	 * clickedRnotifyDetailsRepository.save(rnotifysttatus);
+	 * rNotifierClikedStatusService.sendMessage(); } return new
+	 * ResponseEntity<RNotifierClikedStatus>(rnotifysttatus, HttpStatus.OK); }
+	 */
 
-			LinkedService linkedService = linkedServiceRepository.findOne(rNotifierCliked.getRnotifyCode());
+	@RequestMapping(value = "/click/{serviceCode}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RNotifierClikedStatus> clickRNotify(@PathVariable Long serviceCode) {
+		List<RNotifierClikedStatus> rnotifyList = clickedRnotifyDetailsRepository.findByRnotifyCode(serviceCode);
+		if (null == rnotifyList || rnotifyList.isEmpty()) {
+			RNotifierClikedStatus rnotifysttatus = new RNotifierClikedStatus();
+			LinkedService linkedService = linkedServiceRepository.findByServiceCode(serviceCode);
+
+			LinkedRNotifyDetails linkedRnotifyDetailsDetails = linkedRnotifyDetailsRepository
+					.findByNotifiers(linkedService.getReckonID());
+
 			Threshold thresold = thresholdRepository.findByName(EventIdentifier.DEFAULT.getvalue());
 			ServiceConfig serviceConfig = serviceConfigRepository.findOne(linkedService.getServiceName());
 
 			// Set Notify Details
-			if (!linkedRnotifyDetailsDetails.isEmpty()) {
-				rnotifysttatus.setLinkedId(linkedRnotifyDetailsDetails.get(0).getLinkedId());
-				rnotifysttatus.setLinkedType(linkedRnotifyDetailsDetails.get(0).getLinkedType());
-				rnotifysttatus.setNotifiers(linkedRnotifyDetailsDetails.get(0).getNotifiers());
+			if (null != linkedRnotifyDetailsDetails) {
+				rnotifysttatus.setLinkedId(linkedRnotifyDetailsDetails.getLinkedId());
+				rnotifysttatus.setLinkedType(linkedRnotifyDetailsDetails.getLinkedType());
+				rnotifysttatus.setNotifiers(linkedRnotifyDetailsDetails.getNotifiers());
 			}
 			rnotifysttatus.setRnotifyCode(linkedService.getServiceCode());
 			rnotifysttatus.setServiceName(linkedService.getServiceName());
@@ -124,8 +161,9 @@ public class RNotifyController {
 			rnotifysttatus.setClickTime(new Date());
 			clickedRnotifyDetailsRepository.save(rnotifysttatus);
 			rNotifierClikedStatusService.sendMessage();
+			return new ResponseEntity<RNotifierClikedStatus>(rnotifysttatus, HttpStatus.OK);
 		}
-		return new ResponseEntity<RNotifierClikedStatus>(rnotifysttatus, HttpStatus.OK);
+		return new ResponseEntity<RNotifierClikedStatus>(new RNotifierClikedStatus(), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/clicked", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

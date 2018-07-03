@@ -11,5 +11,6 @@ import com.logicq.reckon.model.RNotifierClikedStatus;
 public interface ClickedRnotifyDetailsRepository extends JpaRepository<RNotifierClikedStatus, Long>{
 	
 	List<RNotifierClikedStatus> findByNotifiers(Long notifiers);
+	List<RNotifierClikedStatus> findByRnotifyCode(Long rnotifyCode);
 	
 }

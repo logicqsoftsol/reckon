@@ -28,20 +28,28 @@
 				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
 									data-target="#entitymodal" ng-click="entityConfig()">Entity Setup</a>
 				</p>
-				<p class="text-left">
-				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
-									data-target="#linkreckon" ng-click="linkRNotiy()">Link RNotify</a>
-				</p>
-	          <p class="text-left">
-				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
-									data-target="#linkService" ng-click="linkServices()">Link Services</a>
-				</p>
-				
 				
 				<p class="text-left">
 				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
 									data-target="#thresholdmodal" ng-click="thresholdConfigure()">Threshold</a>
 				</p>
+				
+				<p class="text-left">
+				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
+									data-target="#editservicestatus" ng-click="serviceConfigure()">Add Service</a>
+				</p>
+				
+				 <p class="text-left">
+				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
+									data-target="#linkService" ng-click="linkServices()">Link Services</a>
+				</p>
+				
+				<p class="text-left">
+				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
+									data-target="#linkreckon" ng-click="linkRNotiy()">Link RNotify</a>
+				</p>
+	         
+				
 				<p class="text-left">
 				<a href="" class="btn btn-primary btn-block btn-sm" data-toggle="modal"
 									data-target="#editadv" ng-click="advConfigure()">Video Advertisement</a>
@@ -150,7 +158,51 @@
 				</div>
 			</div>
 		</div>	
-	
+	  <div class="col-lg-6 col-md-12">
+			<div class="card card-nav-tabs">
+				<div class="card-header" data-background-color="purple" ng-init="getServiceConfigs()">
+					<h4 class="title">Services</h4>
+
+				</div>
+				<div class="col-sm-4 col-md-4" ng-repeat="sc in serviceConfigList">
+				 <div class="card">
+                                <div class="card-body text-center">
+                                    <a data-toggle="tooltip" title="{{sc.serviceName}}"><img class="img-fluid" src="{{sc.iconURL}}" alt="card image" width="30px"></a>
+                                    <h4 class="card-title">{{sc.serviceName}}</h4>
+                                </div>
+                            </div>
+				</div>
+			</div>
+		</div>
+		
+	   <div class="col-lg-6 col-md-12">
+			<div class="card card-nav-tabs">
+				<div class="card-header" data-background-color="purple" ng-init="getAllLinkedServices()">
+					<h4 class="title">Link Services</h4>
+				</div>
+				<div class="card-content table-responsive">
+					<table class="table table-hover">
+						<thead class="text-warning">
+							<th>Service Name</th>
+							<th>Notiy Service Code</th>
+							<th>R-Notiy ID</th>
+						</thead>
+						<tbody>
+							<tr ng-repeat="lservice in linkedServiceList">
+								<td>{{lservice.serviceName}}</td>
+								<td>{{lservice.serviceCode}}</td>
+								<td>{{lservice.reckonID}}</td>
+								<td><a href="" data-toggle="modal"
+									data-target="#linkService" ng-click="editLinkedService(lservice)"><i class="material-icons">mode_edit</i></a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</div>	
+		
+		
 		<div class="col-lg-6 col-md-12">
 			<div class="card card-nav-tabs">
 				<div class="card-header" data-background-color="purple" ng-init="getThresholds()">
@@ -176,55 +228,7 @@
 				</div>
 			</div>
 		</div>	
-		
-   <div class="col-lg-6 col-md-12">
-			<div class="card card-nav-tabs">
-				<div class="card-header" data-background-color="purple" ng-init="getAllLinkedServices()">
-					<h4 class="title">Link Services</h4>
-
-				</div>
-				<div class="card-content table-responsive">
-					<table class="table table-hover">
-						<thead class="text-warning">
-							<th>Service Name</th>
-							<th>Notiy Service Code</th>
-							<th>R-Notiy ID</th>
-						</thead>
-						<tbody>
-							<tr ng-repeat="lservice in linkedServiceList">
-								<td>{{lservice.serviceName}}</td>
-								<td>{{lservice.serviceCode}}</td>
-								<td>{{lservice.reckonID}}</td>
-								<td><a href="" data-toggle="modal"
-									data-target="#linkService" ng-click="editLinkedService(lservice)"><i class="material-icons">mode_edit</i></a></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-
-		</div>	
-	
-		<div class="col-lg-6 col-md-12">
-			<div class="card card-nav-tabs">
-				<div class="card-header" data-background-color="purple" ng-init="getServiceConfigs()">
-					<h4 class="title">Services</h4>
-
-				</div>
-				<div class="col-sm-4 col-md-4" ng-repeat="sc in serviceConfigList">
-				 <div class="card">
-                                <div class="card-body text-center">
-                                    <a data-toggle="tooltip" title="{{sc.serviceName}}"><img class="img-fluid" src="{{sc.iconURL}}" alt="card image" width="30px"></a>
-                                    <h4 class="card-title">{{sc.serviceName}}</h4>
-                                </div>
-                            </div>
-				</div>
-			</div>
-
-		</div>
-		
-
-		
+			
 		<div class="col-lg-11 col-md-12">
 			<div class="card card-nav-tabs">
 				<div class="card-header" data-background-color="purple" ng-init="getAllAdv()">
@@ -418,13 +422,19 @@
 					<div class="col-md-6">
 						<div class="form-group label-floating">
 							<label class="control-label">Entity Name</label> 
-							<input type="text" ng-model="entity.name" class="form-control">
+							<input type="text" ng-model="entity.name" class="form-control"  list="entityList" ng-change="entityChange(entity.name)">
+							 <datalist id="entityList">
+							 <option ng-repeat="ent in entityDefaultList" value="{{ent.name}}">{{ent.name}}</option>
+							</datalist>
 						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="form-group label-floating">
 							<label class="control-label">Attribute Name</label> 
-							<input type="text" ng-model="entity.attrName" class="form-control">
+							<input type="text" ng-model="entity.attrName" class="form-control" list="entityattrList">
+							 <datalist id="entityattrList">
+							 <option ng-repeat="entAttr in entityAttributeDefaultList" value="{{entAttr.name}}">{{entAttr.name}}</option>
+							</datalist>
 						</div>
 					</div>
 				</div>
@@ -449,14 +459,14 @@
 			<div class="modal-header">
 				<div class="card card-nav-tabs">
 					<div class="card-header" data-background-color="purple">
-						<h4 class="title">Link Services And Threshold</h4>
+						<h4 class="title"> Services </h4>
 					</div>
 				</div>
 			</div>
 			<div class="modal-body">
 			
 			  <md-radio-group ng-model="service">
-      <md-radio-button ng-repeat="service in serviceDefaultList"
+       <md-radio-button ng-repeat="service in serviceDefaultList"
                        ng-value="service"
                        aria-label="{{service.serviceName}}">
              <a data-toggle="tooltip" title="{{service.serviceName}}"> <img src="{{service.iconURL}}" class="md-card-image" alt="image caption" width="45px"></a>
@@ -553,7 +563,10 @@
 					<div class="col-md-6">
 						<div class="form-group label-floating">
 							<label class="control-label">Name</label> 
-							<input type="text" ng-model="threshold.name" class="form-control">
+							<input type="text" ng-model="threshold.name" class="form-control" list="thresholdList" ng-change="thresholdChange(threshold.name)">
+							 <datalist id="thresholdList">
+							 <option ng-repeat="thre in thresholdDefaultList" value="{{thre.name}}">{{thre.name}}</option>
+							</datalist>
 						</div>
 					</div>
 					
@@ -569,7 +582,7 @@
 					<div class="col-md-4">
 						<div class="form-group label-floating">
 							<label class="control-label">Color</label>
-							 <input type="color" ng-model="threshold.colorCode" class="form-control">
+							 <input type="color" ng-model="threshold.colorCode" class="form-control" disable>
 						</div>
 					</div>
 				</div>

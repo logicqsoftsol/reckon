@@ -77,12 +77,28 @@
 			   
 				 $scope.thresholdConfigure = function () {
 					 $scope.threshold={};
+					 $scope.thresholdDefaultList=[{"name":"NORMAL"},{"name":"REQUEST"},{"name":"MAJOR"},{"name":"CRITICAL"}];
 				 }
 				 
+				 $scope.thresholdChange= function (name) {
+					 if(name=='NORMAL'){
+						$scope.threshold.colorCode='#008000';
+					}
+					 if(name=='REQUEST'){
+						$scope.threshold.colorCode='#009ce8';
+					 }
+					 if(name=='MAJOR'){
+						 $scope.threshold.colorCode='#e10000';	
+					 }
+					 if(name=='CRITICAL'){
+						 $scope.threshold.colorCode='#ff8000';
+					 }
+				 }
 				 
 				 $scope.serviceConfigList=[];
 				 $scope.serviceConfig={};
 				 $scope.serviceDefaultList=[];
+				 
 				 $scope.getServiceConfigs= function () {
 					 ServiceConfig.GetServiceConfigs($scope).success(function(response, status, headers, config){
 							$scope.serviceConfigList=response;
@@ -90,13 +106,14 @@
 							var errormsg='Unable to fetch User Details ';
 							$exceptionHandler(errormsg);
 						});
-					
+				
 				 }
 				 
 				
 				 $scope.serviceConfigure=function(){
-					 $scope.serviceDefaultList= [{"serviceName":"WAITER","iconURL":"assets/img/hotel/waiter/default.png"},{"serviceName":"BILL","iconURL":"assets/img/hotel/bill/default.png"},{"serviceName":"WATER","iconURL":"assets/img/hotel/water/default.png"}];
+					 $scope.serviceDefaultList= [{"serviceName":"WAITER","iconURL":"assets/img/hotel/waiter/default.png"},{"serviceName":"BILL","iconURL":"assets/img/hotel/bill/default.png"},{"serviceName":"WATER","iconURL":"assets/img/hotel/water/default.png"},{"serviceName":"EMPTY_TABLE","iconURL":"assets/img/hotel/table/default.png"}];
 				 }
+				 
 				 $scope.editServiceConfig= function (sc) {
 					 $scope.serviceConfig.serviceName=sc.serviceName;
 					 $scope.serviceConfig.iconURL=sc.iconURL;
@@ -362,10 +379,21 @@
 		 
 		 $scope.entityList=[];
 		 $scope.entity={};
-		 
+		 $scope.entityDefaultList=[{"name":"RESTAURANT"},{"name":"HOSPITAL"}];
+		 $scope.entityAttributeDefaultList=[{"name":"TABLE"}];
 		 $scope.entityConfig = function () {
 			 $scope.entity={};
+			 $scope.entityDefaultList=[{"name":"RESTAURANT"},{"name":"HOSPITAL"}];
 		 } 
+		 
+		 $scope.entityChange= function (name) {
+			 if("RESTAURANT"==name){
+				 $scope.entityAttributeDefaultList=[{"name":"TABLE"}];
+			 }
+			 if("HOSPITAL"==name){
+				 $scope.entityAttributeDefaultList=[{"name":"ICU"},{"name":"EMERGENCY"},{"name":"NORMAL BED"}];
+			 }
+		 }
 		 
 		 $scope.getEntity = function () {
 			 DashboardService.GetAllEntity($scope).success(function(response, status, headers, config){

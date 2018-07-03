@@ -11,4 +11,6 @@ import com.logicq.reckon.model.LinkedService;
 public interface LinkedServiceRepository extends JpaRepository<LinkedService, Long> {
 	List<LinkedService> findByReckonID(Long reckonId);
 
+	LinkedService findByServiceCode(Long serviceCode);
+
 }

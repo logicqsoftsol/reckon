@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class ServiceConfig implements Serializable {
 
 	@Id
-	@Column(name = "SERVICE_NAME")
+	@Column(name = "SERVICE_NAME", nullable = false)
 	private String serviceName;
 
 	@Column(name = "SERVICE_CODE", nullable = false)
